@@ -3,10 +3,10 @@ extends ../layout.pug
 block appContent
         h1 Here you are can see products of all categories
         p You can choose the goods down below
-        - const length = products.length
+        - const length = (Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff))).length
                 
         - for (let x = 0; x < length; x++)
             br
-            a(href=`/products/${x+1}`) id:#{x+1} #{products[x]}
+            a(href=`/products/${x+1}`) id:#{x+1} #{Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff))[x]}
             br
         

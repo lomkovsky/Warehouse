@@ -1,6 +1,6 @@
 extends ../layout.pug
 
 block appContent
-        h1 #{products[id-1]}
+        h1 #{Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff))[id-1]}
         
         

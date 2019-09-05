@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-
+const database = require('./database.json')
+console.log(Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff)));
 // set static view engine as pug
 app.set('view engine', 'pug');
 app.get('/', (req, res) => {
@@ -10,59 +11,27 @@ app.get('/', (req, res) => {
 });
 app.get('/categories/:category_id', (req, res) => {
     res.render(`./categories/${req.params.category_id}`, {
-        title: 'food',
-        food: [
-            'apple',
-            'beer',
-            'cake'
-        ],
-        electronic: [
-            'cell phone',
-            'notebook'
-        ],
-        stuff: [
-            'rope',
-            'sweet'
-        ]
+        title: `${req.params.category_id}`,
+        database: database
     });
 });
 app.get('/categories', (req, res) => {
     res.render('./categories/categories', {
         title: 'categories',
-        category: [
-            'food',
-            'electronic',
-            'stuff'
-        ]
+        database: database
     });
 });
 app.get('/products', (req, res) => {
     res.render('./products/products', {
         title: 'products',
-        products: [
-            'apple',
-            'beer',
-            'cake',
-            'cell phone',
-            'notebook',
-            'rope',
-            'sweet'            
-        ]
+        database: database        
     });
 });
 app.get('/products/:id', (req, res) => {
     res.render('./products/productsID', {
         title: 'productsID',
         id: req.params.id,
-        products: [
-            'apple',
-            'beer',
-            'cake',
-            'cell phone',
-            'notebook',
-            'rope',
-            'sweet'            
-        ]
+        database: database 
     });
 });
 // returns JSON

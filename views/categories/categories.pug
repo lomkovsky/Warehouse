@@ -2,10 +2,10 @@ extends ../layout.pug
 
 block appContent
         h1 You can choose the category down below
-        - const length = category.length    
+        - const length = (Object.keys(database)).length    
         - for (let x = 0; x < length; x++)
             br
-            a(href=`/categories/${category[x]}`) #{category[x]}
+            a(href=`/categories/${Object.keys(database)[x]}`) #{Object.keys(database)[x]}
             br
         br
         a(href='/products') All products

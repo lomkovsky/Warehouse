@@ -8,9 +8,9 @@ app.get('/', (req, res) => {
         title: 'Home'        
     });
 });
-app.get('/categories/:category_id', (req, res) => {
-    res.render(`./categories/${req.params.category_id}`, {
-        title: `${req.params.category_id}`,
+app.get('/categories/:id', (req, res) => {
+    res.render(`./categories/${req.params.id}`, {
+        title: `${req.params.id}`,
         database
     });
 });

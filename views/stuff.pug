@@ -1,0 +1,9 @@
+extends layout.pug
+
+block appContent
+        h1 you are now in the stuff category
+        p You can choose the goods down below
+        - const length = stuff.length
+                
+        - for (let x = 0; x < length; x++)
+            li #{stuff[x]}

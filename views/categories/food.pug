@@ -1,4 +1,4 @@
-extends layout.pug
+extends ../layout.pug
 
 block appContent
         h1 you are now in the food category
@@ -6,4 +6,6 @@ block appContent
         - const length = food.length
                 
         - for (let x = 0; x < length; x++)
-            li #{food[x]}
+            br
+            a(href=`/products/${x+1}`) id:#{x+1} #{food[x]}
+            br 

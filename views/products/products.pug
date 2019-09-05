@@ -1,0 +1,12 @@
+extends ../layout.pug
+
+block appContent
+        h1 Here you are can see products of all categories
+        p You can choose the goods down below
+        - const length = products.length
+                
+        - for (let x = 0; x < length; x++)
+            br
+            a(href=`/products/${x+1}`) id:#{x+1} #{products[x]}
+            br
+        

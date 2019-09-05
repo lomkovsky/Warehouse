@@ -1,0 +1,12 @@
+extends ../layout.pug
+
+block appContent
+        h1 You can choose the category down below
+        
+        - const length = category.length    
+        - for (let x = 0; x < length; x++)
+            br
+            a(href=`/${category[x]}`) #{category[x]}
+            br
+        br
+        a(href='/products') All products

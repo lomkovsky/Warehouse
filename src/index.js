@@ -6,16 +6,11 @@ const PORT = 3000;
 app.set('view engine', 'pug');
 app.get('/', (req, res) => {
     res.render('index', {
-        title: 'Home',
-        category: [
-            'food',
-            'electronic',
-            'stuff'
-        ]
+        title: 'Home'        
     });
 });
 app.get('/food', (req, res) => {
-    res.render('food', {
+    res.render('./categories/food', {
         title: 'food',
         food: [
             'apple',
@@ -25,7 +20,7 @@ app.get('/food', (req, res) => {
     });
 });
 app.get('/electronic', (req, res) => {
-    res.render('electronic', {
+    res.render('./categories/electronic', {
         title: 'electronic',
         electronic: [
             'cell phone',
@@ -34,7 +29,7 @@ app.get('/electronic', (req, res) => {
     });
 });
 app.get('/stuff', (req, res) => {
-    res.render('stuff', {
+    res.render('./categories/stuff', {
         title: 'stuff',
         stuff: [
             'rope',
@@ -42,6 +37,46 @@ app.get('/stuff', (req, res) => {
         ]
     });
 });
+app.get('/categories', (req, res) => {
+    res.render('./categories/categories', {
+        title: 'categories',
+        category: [
+            'food',
+            'electronic',
+            'stuff'
+        ]
+    });
+});
+app.get('/products', (req, res) => {
+    res.render('./products/products', {
+        title: 'products',
+        products: [
+            'apple',
+            'beer',
+            'cake',
+            'cell phone',
+            'notebook',
+            'rope',
+            'sweet'            
+        ]
+    });
+});
+app.get('/products/:id', (req, res) => {
+    res.render('./products/productsID', {
+        title: 'productsID',
+        id: req.params.id,
+        products: [
+            'apple',
+            'beer',
+            'cake',
+            'cell phone',
+            'notebook',
+            'rope',
+            'sweet'            
+        ]
+    });
+});
+
 // start server
 app.listen(PORT, () => {
     console.log(`serser start on port ${PORT}`);

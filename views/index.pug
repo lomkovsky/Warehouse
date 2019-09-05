@@ -2,11 +2,10 @@ extends layout.pug
 
 block appContent
         h1 Welcome to our warehouse
-        p You can choose the category down below
         
-        - const length = category.length    
-        - for (let x = 0; x < length; x++)
-            br
-            a(href=`/${category[x]}`) #{category[x]}
-            br
+        br
+        a(href='/categories') All categories
+        p
+        br
+        a(href='/products') All products
             

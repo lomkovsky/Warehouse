@@ -1,4 +1,4 @@
-extends layout.pug
+extends ../layout.pug
 
 block appContent
         h1 you are now in the electronic category
@@ -6,4 +6,6 @@ block appContent
         - const length = electronic.length
                 
         - for (let x = 0; x < length; x++)
-            li #{electronic[x]}           
+            br
+            a(href=`/products/${x+4}`) id:#{x+4} #{electronic[x]}
+            br           

@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const database = require('./database.json');
+const productsRouter = require('./routers/products');
+const categoriesRouter = require('./routers/categories');
 // set static view engine as pug
 app.set('view engine', 'pug');
 app.get('/', (req, res) => {
@@ -8,31 +9,11 @@ app.get('/', (req, res) => {
         title: 'Home'        
     });
 });
-app.get('/categories/:id', (req, res) => {
-    res.render(`./categories/${req.params.id}`, {
-        title: `${req.params.id}`,
-        database
-    });
-});
-app.get('/categories', (req, res) => {
-    res.render('./categories/categories', {
-        title: 'categories',
-        database
-    });
-});
-app.get('/products', (req, res) => {
-    res.render('./products/products', {
-        title: 'products',
-        database        
-    });
-});
-app.get('/products/:id', (req, res) => {
-    res.render('./products/productsID', {
-        title: 'productsID',
-        id: req.params.id,
-        database 
-    });
-});
+// connection routers of /products
+app.use(productsRouter);
+// connection routers of /categories
+app.use(categoriesRouter);
+
 // returns JSON
 app.use(express.json());
 

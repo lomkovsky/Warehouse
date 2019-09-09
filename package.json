@@ -4,13 +4,14 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
+    "mongodb": "/home/lom/mongodb/bin/mongod --dbpath=/home/lom/mongodb-data",
     "dev": "nodemon ./src/index.js -e js,pug,css"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.6.12",
+    "mongoose": "^5.6.13",
     "pug": "^2.0.4"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+require('./db/mongodb');
 const app = require('./app.js');
 
 // set port to listen

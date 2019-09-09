@@ -3,10 +3,17 @@ extends ../layout.pug
 block appContent
         h1 Here you are can see products of all categories
         p You can choose the goods down below
-        - const length = (Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff))).length
+        - const countOfProduct = category.length
+        - for (let x = 0; x < countOfProduct; x++)
+            p Name of category is: #{category[x].category}
+            p
+               - for (let y = 0; y < category[x].products.length; y++)
+                    p #{category[x].products[y].product}
+        
+        //- - const length = (Object.keys(category.products)).length)
                 
-        - for (let x = 0; x < length; x++)
-            br
-            a(href=`/products/${x+1}`) id:#{x+1} #{Object.keys(database.food).concat(Object.keys(database.electronic)).concat(Object.keys(database.stuff))[x]}
-            br
+        //- - for (let x = 0; x < length; x++)
+        //-     br
+        //-     a(href=`/products/${x+1}`) category: #{category}id:#{x+1} #{Object.keys(category.products)[x].product}
+        //-     br
         

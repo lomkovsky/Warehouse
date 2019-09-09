@@ -1,14 +1,11 @@
 const express = require('express');
 const router = new express.Router();
-const database = require('../database.json');
+// const database = require('../database.json');
 const Category = require('../models/categories')
 
 router.get('/categories', async (req, res) => {
   try {
     const categories = await Category.find();
-    console.log((Object.keys(categories)).length);
-    console.log(categories[0].category);
-    console.log(Object.values(categories));
     res.render('./categories/categories', {
       title: 'categories',
       categories

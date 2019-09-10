@@ -5,7 +5,7 @@ block appContent
         - const length = (Object.keys(categories)).length  
         - for (let x = 0; x < length; x++)
             br
-            a(href=`/categories/${categories[x].category}`) #{categories[x].category}
+            a(href=`/categories/${categories[x].name}`) #{categories[x].name}
             br
         br
         a(href='/products') All products

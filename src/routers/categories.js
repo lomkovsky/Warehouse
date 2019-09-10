@@ -31,7 +31,7 @@ router.post('/categories/', async (req, res) => {
 // delete category by id
 router.delete('/categories/:id', async (req, res) => {
   try {
-  const category = await Category.findOne({ category : req.params.id });
+  const category = await Category.findOne({ name : req.params.id });
   const product = await Product.findOne({ category : category._id });
   product.delete();
   category.delete();
@@ -44,7 +44,7 @@ router.delete('/categories/:id', async (req, res) => {
 router.patch('/categories/:id', async (req, res) => {
   console.log(req.params.id)
     try {
-      const category = await Category.findOne({ category: req.params.id });
+      const category = await Category.findOne({ name: req.params.id });
       console.log(category)
       category.category = req.body.category;
       console.log(category)

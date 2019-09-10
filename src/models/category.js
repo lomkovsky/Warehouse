@@ -6,13 +6,7 @@ const taskSchema = new mongoose.Schema({
     unique: true,
     required: true,
     trim: true
-  }, 
-  products: [{
-    product: {
-      type: String,
-      required: true
-    }
-  }],
+  }
 });
 const Category = mongoose.model('Category', taskSchema);
 

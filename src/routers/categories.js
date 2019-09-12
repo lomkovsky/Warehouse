@@ -28,22 +28,22 @@ router.post('/categories', async (req, res) => {
 // delete category by id
 router.delete('/categories/:id', async (req, res) => {
   try {
-    const category = await Category.findOneAndDelete ({_id: req.params.id});
+    const category = await Category.findOneAndDelete({ _id: req.params.id });
     const product = await Product.find({ category: category._id });// many
-    if(!product.length === 0){
+    if (!product.length === 0) {
       product.delete();
     };
     category.delete();
     res.send()
   } catch (e) {
-    res.status(404).send(e.message); 
+    res.status(404).send(e.message);
   };
 });
 
 //update category
 router.patch('/categories/:id', async (req, res) => {
   try {
-    const category = await Category.findByIdAndUpdate(req.params.id, {name: req.body.name}, {new: true});
+    const category = await Category.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
     await category.save();
     res.send(category);
   } catch (e) {
@@ -51,12 +51,13 @@ router.patch('/categories/:id', async (req, res) => {
   };
 });
 
+// read category
 router.get('/categories/:id', async (req, res) => {
   try {
-  const category = await Category.findById(req.params.id);
-  res.send(category);
-} catch (e) {
-  res.status(404).send(e.message);
-};
+    const category = await Category.findById(req.params.id);
+    res.send(category);
+  } catch (e) {
+    res.status(404).send(e.message);
+  };
 });
 module.exports = router;

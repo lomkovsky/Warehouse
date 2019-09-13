@@ -29,12 +29,9 @@ router.post('/categories', async (req, res) => {
 router.delete('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findOneAndDelete({ _id: req.params.id });
-    const product = await Product.find({ category: category._id });// many
-    if (!product.length === 0) {
-      product.delete();
-    };
-    category.delete();
-    res.send()
+    await Product.deleteMany({ category: req.params.id });
+    
+    res.send(category)
   } catch (e) {
     res.status(404).send(e.message);
   };

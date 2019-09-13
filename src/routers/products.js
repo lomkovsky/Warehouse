@@ -15,6 +15,8 @@ router.post('/products', async (req, res) => {
         name: req.body.name,
         category: category._id
       });
+      category.products.push(product);
+      await category.save();
       await product.save();
       product = await product.populate('category').execPopulate();
       res.send(product);
@@ -38,6 +40,9 @@ router.get('/products', async (req, res) => {
 router.delete('/products/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
+    const category = await Category.findOne({ products: req.params.id})
+    category.products.pull({ _id: req.params.id })
+    category.save();
     res.send(product);
   } catch (e) {
     res.status(404).send(e.message);

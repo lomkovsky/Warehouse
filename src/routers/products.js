@@ -50,7 +50,15 @@ router.delete('/products/:id', async (req, res) => {
 router.patch('/products/:id', async (req, res) => {
   try {
     let product = await Product
-      .findOneAndUpdate({ _id: req.params.id }, { name: req.body.name }, { new: true })
+      .findOneAndUpdate({ _id: req.params.id },
+        {
+          name: req.body.name,
+          description: req.body.description,
+          price: req.body.price,
+          amount: req.body.amount,
+          $inc: { '__v': 1 }
+        },
+        { new: true })
     product = await product.populate('category').execPopulate();
     console.log(product);
     res.send(product);

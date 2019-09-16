@@ -26,7 +26,7 @@ router.post('/categories', async (req, res) => {
 // delete category by id
 router.delete('/categories/:id', async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id ); 
+    const category = await Category.findById(req.params.id);
     await category.remove();
     res.send();
   } catch (e) {
@@ -37,7 +37,13 @@ router.delete('/categories/:id', async (req, res) => {
 //update category
 router.patch('/categories/:id', async (req, res) => {
   try {
-    const category = await Category.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
+    const category = await Category.findByIdAndUpdate(req.params.id,
+      {
+        name: req.body.name,
+        description: req.body.description,
+        $inc: { '__v': 1 }
+      },
+      { new: true });
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);

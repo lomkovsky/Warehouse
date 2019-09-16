@@ -1,6 +1,5 @@
 const express = require('express');
 const router = new express.Router();
-// const database = require('../database.json');
 const Category = require('../models/category');
 const Product = require('../models/product');
 
@@ -13,10 +12,11 @@ router.post('/products', async (req, res) => {
     try {
       let product = new Product({
         name: req.body.name,
-        category: category._id
+        category: category._id,
+        description: req.body.description,
+        amount: req.body.amount,
+        price: req.body.price
       });
-      category.products.push(product);
-      await category.save();
       await product.save();
       product = await product.populate('category').execPopulate();
       res.send(product);
@@ -40,9 +40,6 @@ router.get('/products', async (req, res) => {
 router.delete('/products/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    const category = await Category.findOne({ products: req.params.id})
-    category.products.pull({ _id: req.params.id })
-    category.save();
     res.send(product);
   } catch (e) {
     res.status(404).send(e.message);
@@ -54,7 +51,6 @@ router.patch('/products/:id', async (req, res) => {
   try {
     let product = await Product
       .findOneAndUpdate({ _id: req.params.id }, { name: req.body.name }, { new: true })
-    await product.save();
     product = await product.populate('category').execPopulate();
     console.log(product);
     res.send(product);

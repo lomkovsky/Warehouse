@@ -7,6 +7,15 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  description: {
+    type: String
+  },
+  price: {
+    type: Number
+  },
+  amount: {
+    type: Number
+  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'

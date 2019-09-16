@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Product = require('./product');
 
 const categorySchema = new mongoose.Schema({
   name: {
@@ -7,11 +8,27 @@ const categorySchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  products: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  }]
+  description: {
+    type: String
+  }  
 });
+
+categorySchema.set('toJSON', { virtuals: true });
+
+categorySchema.virtual('products', {
+  ref: 'Product',
+  localField: '_id',
+  foreignField: 'category',
+  count: true
+});
+
+
+categorySchema.pre('remove', async function (next) {
+  const category = this;
+  await Product.deleteMany({ category: category._id });
+  next();
+});
+
 
 const Category = mongoose.model('Category', categorySchema);
 

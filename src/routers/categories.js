@@ -1,13 +1,11 @@
 const express = require('express');
 const router = new express.Router();
-// const database = require('../database.json');
 const Category = require('../models/category');
-const Product = require('../models/product');
 
 // read all categories
 router.get('/categories', async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find().populate('products');
     res.send(categories);
   } catch (e) {
     res.status(500).send('Something went wrong');
@@ -28,10 +26,9 @@ router.post('/categories', async (req, res) => {
 // delete category by id
 router.delete('/categories/:id', async (req, res) => {
   try {
-    const category = await Category.findOneAndDelete({ _id: req.params.id });
-    await Product.deleteMany({ category: req.params.id });
-    
-    res.send(category)
+    const category = await Category.findById(req.params.id ); 
+    await category.remove();
+    res.send();
   } catch (e) {
     res.status(404).send(e.message);
   };
@@ -41,7 +38,6 @@ router.delete('/categories/:id', async (req, res) => {
 router.patch('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
-    await category.save();
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);

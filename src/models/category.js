@@ -10,7 +10,9 @@ const categorySchema = new mongoose.Schema({
   },
   description: {
     type: String
-  }  
+  }
+}, {
+  timestamps: true,
 });
 
 categorySchema.set('toJSON', { virtuals: true });

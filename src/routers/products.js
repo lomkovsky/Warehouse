@@ -10,13 +10,7 @@ router.post('/products', async (req, res) => {
     res.status(404).send('Category not found!');
   } else {
     try {
-      let product = new Product({
-        name: req.body.name,
-        category: category._id,
-        description: req.body.description,
-        amount: req.body.amount,
-        price: req.body.price
-      });
+      let product = new Product(req.body);
       await product.save();
       product = await product.populate('category').execPopulate();
       res.send(product);
@@ -29,10 +23,10 @@ router.post('/products', async (req, res) => {
 // read all products from all categories
 router.get('/products', async (req, res) => {
   try {
-    const product = await Product.find().populate('category');
-    res.send(product);
-  } catch (e) {
-    res.status(400).send(e.message);
+    const products = await Product.find().populate('category');
+    res.send(products);
+  } catch (err) {
+    res.status(400).send(err.message);
   };
 });
 
@@ -40,7 +34,10 @@ router.get('/products', async (req, res) => {
 router.delete('/products/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    res.send(product);
+    if (!product) {
+      return res.status(404).send('product not found')
+    };
+    res.satatus(204).send();
   } catch (e) {
     res.status(404).send(e.message);
   };
@@ -59,8 +56,10 @@ router.patch('/products/:id', async (req, res) => {
           $inc: { '__v': 1 }
         },
         { new: true })
+    if (!product) {
+      return res.status(404).send('product not found')
+    };
     product = await product.populate('category').execPopulate();
-    console.log(product);
     res.send(product);
   } catch (e) {
     res.status(404).send(e.message);
@@ -70,6 +69,9 @@ router.patch('/products/:id', async (req, res) => {
 // read product
 router.get('/products/:id', async (req, res) => {
   const product = await Product.findById(req.params.id).populate('category');
+  if (!product) {
+    return res.status(404).send('product not found')
+  };
   res.send(product);
 });
 module.exports = router;

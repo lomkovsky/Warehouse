@@ -27,8 +27,11 @@ router.post('/categories', async (req, res) => {
 router.delete('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).send('category not found')
+    };
     await category.remove();
-    res.send();
+    res.satatus(204).send();
   } catch (e) {
     res.status(404).send(e.message);
   };
@@ -38,12 +41,11 @@ router.delete('/categories/:id', async (req, res) => {
 router.patch('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(req.params.id,
-      {
-        name: req.body.name,
-        description: req.body.description,
-        $inc: { '__v': 1 }
-      },
+      req.body,
       { new: true });
+    if (!category) {
+      return res.status(404).send('category not found')
+    };
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);
@@ -54,6 +56,9 @@ router.patch('/categories/:id', async (req, res) => {
 router.get('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).send('category not found')
+    };
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);

@@ -11,10 +11,12 @@ const productSchema = new mongoose.Schema({
     type: String
   },
   price: {
-    type: Number
+    type: Number,
+    default: 0
   },
   amount: {
-    type: Number
+    type: Number,
+    default: 0
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,

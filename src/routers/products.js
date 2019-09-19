@@ -48,13 +48,7 @@ router.patch('/products/:id', async (req, res) => {
   try {
     let product = await Product
       .findOneAndUpdate({ _id: req.params.id },
-        {
-          name: req.body.name,
-          description: req.body.description,
-          price: req.body.price,
-          amount: req.body.amount,
-          $inc: { '__v': 1 }
-        },
+        req.body,
         { new: true })
     if (!product) {
       return res.status(404).send('product not found')

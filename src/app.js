@@ -10,6 +10,12 @@ app.use(express.json());
 // passport config
 require('./config/passport')(passport);
 
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+  }))
+
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());

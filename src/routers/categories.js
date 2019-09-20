@@ -31,7 +31,7 @@ router.delete('/categories/:id', async (req, res) => {
       return res.status(404).send('category not found')
     };
     await category.remove();
-    res.satatus(204).send();
+    res.status(204).send();
   } catch (e) {
     res.status(404).send(e.message);
   };

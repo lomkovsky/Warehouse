@@ -38,7 +38,7 @@ router.delete('/products/:id', passport.authenticate('jwt', { session: false }),
     if (!product) {
       return res.status(404).send('product not found')
     };
-    res.satatus(204).send();
+    res.status(204).send();
   } catch (e) {
     res.status(404).send(e.message);
   };

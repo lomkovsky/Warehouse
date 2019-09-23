@@ -28,9 +28,7 @@ router.post('/register', async (req, res) => {
   };
 });
 
-router.get('/success', (req, res) => {
-  res.send("Welcome " + req.query.email + "!!")
-});
+// error logging handle
 router.get('/error', (req, res) => res.send("error logging in"));
 
 // login handle
@@ -43,12 +41,12 @@ router.post('/login',
     res.send({ welcomeMassage, token });
   });
 
+// get my profile
 router.get('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
   const publicUser = await req.user.publicFields();
   res.send(publicUser);
 }
 );
-
 
 // logout handle
 router.get('/logout', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -64,6 +62,43 @@ router.get('/logout', isTokenHasDeleted, passport.authenticate('jwt', { session:
   } catch (e) {
     res.status(500).send();
   }
+});
+
+// update my profile
+router.patch('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid filds for updates!' });
+  };
+  if (req.body.password.length < 6) {
+    return res.status(400).send("password less than 6 character");
+  };
+  try {
+    let user = await User.findByIdAndUpdate(req.user._id,
+      req.body,
+      { new: true });
+    if (!user) {
+      return res.status(404).send('user not found')
+    };
+    user.password = await bcrypt.hash(user.password, 8);
+    await user.save();
+    user = await user.publicFields();
+    res.send(user);
+  } catch (e) {
+    res.status(404).send(e.message);
+  };
+});
+
+// delete my profile
+router.delete('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    await req.user.remove();
+    res.status(204).send();
+  } catch (e) {
+    res.status(500).send(e.message);
+  };
 });
 
 module.exports = router;

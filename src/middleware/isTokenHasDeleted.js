@@ -6,7 +6,6 @@ const isTokenHasDeleted = async (req, res, next) => {
   if (userHasdeletedToken) {
     return res.status(400).send("token has deleted")
   }
-
   next();
 }
 module.exports = isTokenHasDeleted;

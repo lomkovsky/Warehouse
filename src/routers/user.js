@@ -3,6 +3,7 @@ const router = new express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const isTokenHasDeleted = require('../middleware/isTokenHasDeleted');
 
 // register page
 router.post('/register', async (req, res) => {
@@ -19,21 +20,50 @@ router.post('/register', async (req, res) => {
     // create a new user
     const user = new User(req.body);
     user.password = await bcrypt.hash(user.password, 8);
-    res.send(user);
+    await user.save();
+    const token = await user.generateAuthToken();
+    res.status(201).send({ user, token });
   } catch (e) {
-    res.sendStatus(500)
+    res.status(400).send(e.message);
   };
 });
-// login handle
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', {
-    successRedirect: '/dashbord',
-    failureRedirect: '/users/login'
-  })(req, res, next);
+
+router.get('/success', (req, res) => {
+  res.send("Welcome " + req.query.email + "!!")
 });
+router.get('/error', (req, res) => res.send("error logging in"));
+
+// login handle
+router.post('/login',
+  passport.authenticate('local', { failureRedirect: '/error' }),
+  async function (req, res) {
+    const user = req.user;
+    const token = await user.generateAuthToken();
+    const welcomeMassage = "Welcome " + user.name + "!!";
+    res.send({ welcomeMassage, token });
+  });
+
+router.get('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const publicUser = await req.user.publicFields();
+  res.send(publicUser);
+}
+);
+
+
 // logout handle
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect("./");
-})
+router.get('/logout', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const tokenFromHeder = req.header('Authorization').replace('Bearer ', '');
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== tokenFromHeder;
+    });
+    req.user.deletedtokens = req.user.deletedtokens.concat({ tokenFromHeder });
+    await req.user.save();
+    req.logout();
+    res.send('logout');
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

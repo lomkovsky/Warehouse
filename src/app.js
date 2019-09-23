@@ -4,26 +4,37 @@ const productsRouter = require('./routers/products');
 const categoriesRouter = require('./routers/categories');
 const userRouter = require('./routers/user');
 const passport = require('passport');
-const { ensureAuthenticated } = require('./config/auth')
+
+passport.serializeUser((user, done) => {
+    done(null, user.email);
+});
+
+passport.deserializeUser(async (email, done) => {
+    try {
+        let user = await User.findOne({ email });
+        if (!user) {
+            return done(new Error('user not found'));
+        }
+        done(null, user);
+    } catch (e) {
+        done(e);
+    }
+});
+
 // returns JSON
 app.use(express.json());
 // passport config
 require('./config/passport')(passport);
 
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: false
-  }))
 
 // passport middleware
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 // set static view engine as pug
 
 app.set('view engine', 'pug');
-app.get('/', ensureAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
     res.render('index', {
         title: 'Home'
     });
@@ -34,6 +45,7 @@ app.use(productsRouter);
 app.use(categoriesRouter);
 // connection routers of /user
 app.use(userRouter);
+
 
 
 module.exports = app;

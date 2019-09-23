@@ -2,9 +2,10 @@ const express = require('express');
 const router = new express.Router();
 const Category = require('../models/category');
 const Product = require('../models/product');
+const passport = require('passport');
 
 // create a new product
-router.post('/products', async (req, res) => {
+router.post('/products', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const category = await Category.findById(req.body.category);
   if (!category) {
     res.status(404).send('Category not found!');
@@ -31,7 +32,7 @@ router.get('/products', async (req, res) => {
 });
 
 // delete product
-router.delete('/products/:id', async (req, res) => {
+router.delete('/products/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
@@ -44,7 +45,7 @@ router.delete('/products/:id', async (req, res) => {
 });
 
 // update product
-router.patch('/products/:id', async (req, res) => {
+router.patch('/products/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     let product = await Product
       .findOneAndUpdate({ _id: req.params.id },

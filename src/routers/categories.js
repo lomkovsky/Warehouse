@@ -1,7 +1,6 @@
 const express = require('express');
 const router = new express.Router();
 const Category = require('../models/category');
-const isTokenHasDeleted = require('../middleware/isTokenHasDeleted');
 const passport = require('passport');
 
 // read all categories
@@ -16,7 +15,7 @@ router.get('/categories', async (req, res) => {
 });
 
 // create a new categories
-router.post('/categories', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/categories', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const category = new Category(req.body)
   try {
     await category.save();
@@ -27,7 +26,7 @@ router.post('/categories', isTokenHasDeleted, passport.authenticate('jwt', { ses
 });
 
 // delete category by id
-router.delete('/categories/:id', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/categories/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
@@ -41,7 +40,7 @@ router.delete('/categories/:id', isTokenHasDeleted, passport.authenticate('jwt',
 });
 
 //update category
-router.patch('/categories/:id', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.patch('/categories/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(req.params.id,
       req.body,

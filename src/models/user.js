@@ -19,26 +19,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  tokens: [{
-    token: {
-      type: String
-    }
-  }],
-  deletedtokens: [{
-    tokenFromHeder: {
-      type: String
-    }
-  }],
 });
 
 // create token write to database and return it
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user.id.toString() }, "thisisit");
-
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
-
+  const token = jwt.sign({ _id: user.id.toString() }, process.env.JWT_SECRET, {
+    expiresIn: '1h' // expires in 1 hour
+  });
   return token;
 };
 
@@ -47,10 +35,8 @@ userSchema.methods.publicFields = async function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
-  delete userObject.tokens;
-  delete userObject.deletedtokens;
   return userObject;
-}
+};
 
 const User = mongoose.model('User', userSchema);
 

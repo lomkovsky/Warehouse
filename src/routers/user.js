@@ -3,10 +3,10 @@ const router = new express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-const isTokenHasDeleted = require('../middleware/isTokenHasDeleted');
 
 // register page
-router.post('/register', async (req, res) => {
+// !!! TODO: make REST `POST` /users !!!
+router.post('/users', async (req, res) => {
   const { name, email, password } = req.body;
   // check required fields
   if (!name || !email || !password) {
@@ -30,11 +30,15 @@ router.post('/register', async (req, res) => {
 });
 
 // error logging handle
-router.get('/error', (req, res) => res.send("error logging in"));
+router.get('/users/login/error', (req, res) => res.status(401).send("error logging"));
 
 // login handle
-router.post('/login',
-  passport.authenticate('local', { failureRedirect: '/error' }),
+// !!! TODO: /users/login !!!
+router.post('/users/login',
+  passport.authenticate('local', { 
+    // !!! TODO: make research in passport if it is possibility to set status on failureRedirect !!!
+    failureRedirect: '/users/login/error' 
+  }),
   async function (req, res) {
     const user = req.user;
     const token = await user.generateAuthToken();
@@ -43,37 +47,22 @@ router.post('/login',
   });
 
 // get my profile
-router.get('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+// !!! /users/me !!!
+// !!! TODO: research may be POST request !!!
+router.get('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const publicUser = await req.user.publicFields();
   res.send(publicUser);
-}
-);
-
-// logout handle
-router.get('/logout', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
-  try {
-    const tokenFromHeder = req.header('Authorization').replace('Bearer ', '');
-    req.user.tokens = req.user.tokens.filter((token) => {
-      return token.token !== tokenFromHeder;
-    });
-    req.user.deletedtokens = req.user.deletedtokens.concat({ tokenFromHeder });
-    await req.user.save();
-    req.logout();
-    res.send('logout');
-  } catch (e) {
-    res.status(500).send();
-  }
 });
 
 // update my profile
-router.patch('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.patch('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
   if (!isValidOperation) {
     return res.status(400).send({ error: 'Invalid filds for updates!' });
   };
-  if (req.body.password.length < 6) {
+  if (req.body.password && req.body.password.length < 6) {
     return res.status(400).send("password less than 6 character");
   };
   try {
@@ -93,7 +82,7 @@ router.patch('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: f
 });
 
 // delete my profile
-router.delete('/me', isTokenHasDeleted, passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     await req.user.remove();
     res.status(204).send();

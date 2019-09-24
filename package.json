@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "mongodb": "/home/lom/mongodb/bin/mongod --dbpath=/home/lom/mongodb-data",
-    "dev": "nodemon ./src/index.js -e js,pug,css"
+    "dev": "env-cmd -f ./src/config/dev.env nodemon ./src/index.js -e js,pug,css"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "pug": "^2.0.4"
   },
   "devDependencies": {
+    "env-cmd": "^10.0.1",
     "nodemon": "^1.19.2"
   }
 }

@@ -13,7 +13,6 @@ require('./middleware/passport')(passport);
 
 // passport middleware
 app.use(passport.initialize());
-// app.use(passport.session());
 
 // set static view engine as pug
 app.set('view engine', 'pug');

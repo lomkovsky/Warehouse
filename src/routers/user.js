@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
 // register page
-// !!! TODO: make REST `POST` /users !!!
 router.post('/users', async (req, res) => {
   const { name, email, password } = req.body;
   // check required fields
@@ -33,11 +32,9 @@ router.post('/users', async (req, res) => {
 router.get('/users/login/error', (req, res) => res.status(401).send("error logging"));
 
 // login handle
-// !!! TODO: /users/login !!!
 router.post('/users/login',
-  passport.authenticate('local', { 
-    // !!! TODO: make research in passport if it is possibility to set status on failureRedirect !!!
-    failureRedirect: '/users/login/error' 
+  passport.authenticate('local', {
+    failureRedirect: '/users/login/error'
   }),
   async function (req, res) {
     const user = req.user;
@@ -47,8 +44,6 @@ router.post('/users/login',
   });
 
 // get my profile
-// !!! /users/me !!!
-// !!! TODO: research may be POST request !!!
 router.get('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const publicUser = await req.user.publicFields();
   res.send(publicUser);

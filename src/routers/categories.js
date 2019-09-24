@@ -11,7 +11,7 @@ router.get('/categories', async (req, res) => {
     res.send(categories);
   } catch (e) {
     res.status(500).send('Something went wrong');
-  };
+  }
 });
 
 // create a new categories
@@ -22,7 +22,7 @@ router.post('/categories', passport.authenticate('jwt', { session: false }), asy
     res.status(201).send(category);
   } catch (e) {
     res.status(400).send(e.message);
-  };
+  }
 });
 
 // delete category by id
@@ -31,12 +31,12 @@ router.delete('/categories/:id', passport.authenticate('jwt', { session: false }
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).send('category not found')
-    };
+    }
     await category.remove();
     res.status(204).send();
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 
 //update category
@@ -47,11 +47,11 @@ router.patch('/categories/:id', passport.authenticate('jwt', { session: false })
       { new: true });
     if (!category) {
       return res.status(404).send('category not found')
-    };
+    }
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 
 // read category
@@ -60,10 +60,10 @@ router.get('/categories/:id', async (req, res) => {
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).send('category not found')
-    };
+    }
     res.send(category);
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 module.exports = router;

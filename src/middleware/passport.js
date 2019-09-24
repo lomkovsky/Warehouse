@@ -16,18 +16,18 @@ module.exports = function (passport) {
           user = await User.findOne({ email });
           if (!user) {
             return done(null, false, { message: 'No user by that email' });
-          };
+          }
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) throw err;
             if (isMatch) {
               return done(null, user);
             } else {
               return done(null, false, { message: 'Not a matching password' });
-            };
+            }
           });
         } catch (err) {
           return done(err);
-        };
+        }
       })
   );
   // JWT strategy passport
@@ -41,7 +41,7 @@ module.exports = function (passport) {
         return cb(null, user);
       } catch (err) {
         return cb(err);
-      };
+      }
     }
   ));
 

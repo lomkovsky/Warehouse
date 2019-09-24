@@ -18,7 +18,7 @@ router.post('/products', passport.authenticate('jwt', { session: false }), async
     } catch (e) {
       res.status(400).send(e.message);
     }
-  };
+  }
 });
 
 // read all products from all categories
@@ -28,7 +28,7 @@ router.get('/products', async (req, res) => {
     res.send(products);
   } catch (err) {
     res.status(400).send(err.message);
-  };
+  }
 });
 
 // delete product
@@ -37,11 +37,11 @@ router.delete('/products/:id', passport.authenticate('jwt', { session: false }),
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
       return res.status(404).send('product not found')
-    };
+    }
     res.status(204).send();
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 
 // update product
@@ -53,12 +53,12 @@ router.patch('/products/:id', passport.authenticate('jwt', { session: false }), 
         { new: true })
     if (!product) {
       return res.status(404).send('product not found')
-    };
+    }
     product = await product.populate('category').execPopulate();
     res.send(product);
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 
 // read product
@@ -66,7 +66,7 @@ router.get('/products/:id', async (req, res) => {
   const product = await Product.findById(req.params.id).populate('category');
   if (!product) {
     return res.status(404).send('product not found')
-  };
+  }
   res.send(product);
 });
 

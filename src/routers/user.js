@@ -10,11 +10,11 @@ router.post('/users', async (req, res) => {
   // check required fields
   if (!name || !email || !password) {
     return res.sendStatus(400);
-  };
+  }
   // check password length
   if (password.length < 6) {
     return res.status(400).send("password less than 6 character");
-  };
+  }
   try {
     // create a new user
     let user = new User(req.body);
@@ -25,7 +25,7 @@ router.post('/users', async (req, res) => {
     res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e.message);
-  };
+  }
 });
 
 // error logging handle
@@ -56,24 +56,24 @@ router.patch('/users/me', passport.authenticate('jwt', { session: false }), asyn
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
   if (!isValidOperation) {
     return res.status(400).send({ error: 'Invalid filds for updates!' });
-  };
+  }
   if (req.body.password && req.body.password.length < 6) {
     return res.status(400).send("password less than 6 character");
-  };
+  }
   try {
     let user = await User.findByIdAndUpdate(req.user._id,
       req.body,
       { new: true });
     if (!user) {
       return res.status(404).send('user not found')
-    };
+    }
     user.password = await bcrypt.hash(user.password, 8);
     await user.save();
     user = await user.publicFields();
     res.send(user);
   } catch (e) {
     res.status(404).send(e.message);
-  };
+  }
 });
 
 // delete my profile
@@ -83,7 +83,7 @@ router.delete('/users/me', passport.authenticate('jwt', { session: false }), asy
     res.status(204).send();
   } catch (e) {
     res.status(500).send(e.message);
-  };
+  }
 });
 
 module.exports = router;

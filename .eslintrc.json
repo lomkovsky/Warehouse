@@ -2,9 +2,12 @@
     "env": {
         "commonjs": true,
         "es6": true,
-        "node": true
+        "node": true,
+        "mocha": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended"
+      ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -13,5 +16,8 @@
         "ecmaVersion": 2018
     },
     "rules": {
-    }
+    },
+    "plugins": [
+        "mocha"
+      ]
 }

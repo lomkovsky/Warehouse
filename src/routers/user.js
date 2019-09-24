@@ -18,10 +18,11 @@ router.post('/register', async (req, res) => {
   };
   try {
     // create a new user
-    const user = new User(req.body);
+    let user = new User(req.body);
     user.password = await bcrypt.hash(user.password, 8);
     await user.save();
     const token = await user.generateAuthToken();
+    user = await user.publicFields();
     res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e.message);

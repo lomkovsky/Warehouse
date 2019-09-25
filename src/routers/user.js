@@ -1,7 +1,6 @@
 const express = require('express');
 const router = new express.Router();
 const User = require('../models/user');
-const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
 // register page
@@ -18,7 +17,6 @@ router.post('/users', async (req, res) => {
   try {
     // create a new user
     let user = new User(req.body);
-    user.password = await bcrypt.hash(user.password, 8);
     await user.save();
     const token = await user.generateAuthToken();
     user = await user.publicFields();
@@ -61,13 +59,13 @@ router.patch('/users/me', passport.authenticate('jwt', { session: false }), asyn
     return res.status(400).send("password less than 6 character");
   }
   try {
-    let user = await User.findByIdAndUpdate(req.user._id,
-      req.body,
-      { new: true });
+    let user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send('user not found')
     }
-    user.password = await bcrypt.hash(user.password, 8);
+    if(req.body.name) {user.name = req.body.name}
+    if(req.body.email) {user.email = req.body.email}
+    if(req.body.password) {user.password = req.body.password}
     await user.save();
     user = await user.publicFields();
     res.send(user);

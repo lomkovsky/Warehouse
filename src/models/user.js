@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -37,6 +38,15 @@ userSchema.methods.publicFields = async function () {
   delete userObject.password;
   return userObject;
 };
+
+// hash the plain password before saving
+userSchema.pre('save', async function(next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 

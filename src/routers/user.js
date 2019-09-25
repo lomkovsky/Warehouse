@@ -1,7 +1,9 @@
+/* eslint-disable consistent-return */
 const express = require('express');
+
 const router = new express.Router();
-const User = require('../models/user');
 const passport = require('passport');
+const User = require('../models/user');
 
 // register page
 router.post('/users', async (req, res) => {
@@ -12,7 +14,7 @@ router.post('/users', async (req, res) => {
   }
   // check password length
   if (password.length < 6) {
-    return res.status(400).send("password less than 6 character");
+    return res.status(400).send('password less than 6 character');
   }
   try {
     // create a new user
@@ -27,17 +29,17 @@ router.post('/users', async (req, res) => {
 });
 
 // error logging handle
-router.get('/users/login/error', (req, res) => res.status(401).send("error logging"));
+router.get('/users/login/error', (req, res) => res.status(401).send('error logging'));
 
 // login handle
 router.post('/users/login',
   passport.authenticate('local', {
-    failureRedirect: '/users/login/error'
+    failureRedirect: '/users/login/error',
   }),
-  async function (req, res) {
-    const user = req.user;
+  async (req, res) => {
+    const { user } = req;
     const token = await user.generateAuthToken();
-    const welcomeMassage = "Welcome " + user.name + "!!";
+    const welcomeMassage = `Welcome ${user.name}!!`;
     res.send({ welcomeMassage, token });
   });
 
@@ -56,12 +58,13 @@ router.patch('/users/me', passport.authenticate('jwt', { session: false }), asyn
     return res.status(400).send({ error: 'Invalid filds for updates!' });
   }
   if (req.body.password && req.body.password.length < 6) {
-    return res.status(400).send("password less than 6 character");
+    return res.status(400).send('password less than 6 character');
   }
   try {
+    // eslint-disable-next-line no-underscore-dangle
     let user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).send('user not found')
+      return res.status(404).send('user not found');
     }
     Object.assign(user, req.body);
     await user.save();

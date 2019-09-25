@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-expressions */
 const request = require('supertest');
-const { expect } = require("chai");
+const { expect } = require('chai');
 require('../db/mongodb');
 const app = require('../app.js');
 const Product = require('../models/product');
@@ -7,7 +8,6 @@ const { testData, setupDatabase } = require('./fixtures/db.js');
 
 beforeEach(setupDatabase);
 describe('Tests for product routers', () => {
-
   it('Should fetched all product from db', async () => {
     const response = await request(app)
       .get('/products')
@@ -28,15 +28,15 @@ describe('Tests for product routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .delete(`/products/${testData.testProduct.id}`)
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(204);
     expect(response.body.name).not.to.exist;
-    const productOneFromDB = await Product.findById(testData.testProduct.id)
+    const productOneFromDB = await Product.findById(testData.testProduct.id);
     expect(productOneFromDB).not.to.exist;
   });
 
@@ -46,18 +46,18 @@ describe('Tests for product routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .post('/products')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
-        name: testData.newTestProduct.name, 
+        name: testData.newTestProduct.name,
         description: testData.newTestProduct.description,
         category: testData.testCategory.id,
         amount: testData.newTestProduct.amount,
-        price: testData.newTestProduct.price
+        price: testData.newTestProduct.price,
       })
       .expect(200);
     expect(response.body.name).to.equal(testData.newTestProduct.name);
@@ -72,17 +72,17 @@ describe('Tests for product routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .patch(`/products/${testData.testProduct.id}`)
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
         name: testData.newTestProduct.name,
         description: testData.newTestProduct.description,
         amount: testData.newTestProduct.amount,
-        price: testData.newTestProduct.price
+        price: testData.newTestProduct.price,
       })
       .expect(200);
     expect(response.body.name).to.equal(testData.newTestProduct.name);

@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-expressions */
 const request = require('supertest');
-const { expect } = require("chai");
+const { expect } = require('chai');
 require('../db/mongodb');
 const app = require('../app.js');
 const Category = require('../models/category');
@@ -8,7 +9,6 @@ const { testData, setupDatabase } = require('./fixtures/db.js');
 
 beforeEach(setupDatabase);
 describe('Tests for categories routers', () => {
-
   it('Should fetched all categories from db', async () => {
     const response = await request(app)
       .get('/categories')
@@ -29,12 +29,12 @@ describe('Tests for categories routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .delete(`/categories/${testData.testCategory.id}`)
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(204);
     expect(response.body.name).not.to.exist;
     const categoryOneFromDB = await Category.findById(testData.testCategory.id);
@@ -47,15 +47,15 @@ describe('Tests for categories routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .post('/categories')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
         name: testData.newTestCategory.name,
-        description: testData.newTestCategory.description
+        description: testData.newTestCategory.description,
       })
       .expect(201);
     expect(response.body.name).to.equal(testData.newTestCategory.name);
@@ -69,15 +69,15 @@ describe('Tests for categories routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .patch(`/categories/${testData.testCategory.id}`)
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
         name: testData.newTestCategory.name,
-        description: testData.newTestCategory.description
+        description: testData.newTestCategory.description,
       })
       .expect(200);
     expect(response.body.name).to.equal(testData.newTestCategory.name);

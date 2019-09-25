@@ -1,21 +1,22 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-underscore-dangle */
 const request = require('supertest');
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const { expect } = require("chai");
+const { expect } = require('chai');
+const User = require('../models/user');
 require('../db/mongodb');
 const app = require('../app.js');
 const { testData, setupDatabase } = require('./fixtures/db.js');
 
 beforeEach(setupDatabase);
 describe('Tests for user routers', () => {
-
   it('Should signup a new user', async () => {
     const response = await request(app)
       .post('/users')
       .send({
-        name:  testData.newTestUser.name,
+        name: testData.newTestUser.name,
         email: testData.newTestUser.email,
-        password: testData.newTestUser.password
+        password: testData.newTestUser.password,
       })
       .expect(201);
     const user = await User.findById(response.body.user._id);
@@ -28,8 +29,8 @@ describe('Tests for user routers', () => {
     await request(app)
       .post('/users')
       .send({
-        name:  testData.newTestUser.name,
-        email: testData.newTestUser.email
+        name: testData.newTestUser.name,
+        email: testData.newTestUser.email,
       })
       .expect(400);
   });
@@ -38,12 +39,12 @@ describe('Tests for user routers', () => {
     const response = await request(app)
       .post('/users')
       .send({
-        name:  testData.newTestUser.name,
+        name: testData.newTestUser.name,
         email: testData.newTestUser.email,
-        password: testData.shortPassword
+        password: testData.shortPassword,
       })
       .expect(400);
-    expect(response.text).to.equal("password less than 6 character");
+    expect(response.text).to.equal('password less than 6 character');
   });
 
   it('Should do not login my user profile because of a bad pass', async () => {
@@ -51,7 +52,7 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.newTestUser.password
+        password: testData.newTestUser.password,
       })
       .expect(302);
     await request(app)
@@ -65,7 +66,7 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
   });
@@ -76,12 +77,12 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .get('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(200);
     expect(response.body.name).to.equal(testData.testUser.name);
   });
@@ -92,14 +93,14 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .delete('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(204);
-    expect(response.body.name).not.to.exist
+    expect(response.body.name).not.to.exist;
   });
 
   it('Should update email of my user profile', async () => {
@@ -108,17 +109,17 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .patch('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
-        email: testData.newTestUser.email
+        email: testData.newTestUser.email,
       })
       .expect(200);
-    const userOneFromDB = await User.findById(testData.testUser.id)
+    const userOneFromDB = await User.findById(testData.testUser.id);
     expect(userOneFromDB.email).to.equal(testData.newTestUser.email);
     expect(userOneFromDB.email).to.equal(response.body.email);
   });
@@ -129,14 +130,14 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .patch('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
-        age: 18
+        age: 18,
       })
       .expect(400);
     expect(response.body.error).to.equal('Invalid filds for updates!');
@@ -148,17 +149,17 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     const response = await request(app)
       .patch('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
-        password: testData.shortPassword
+        password: testData.shortPassword,
       })
       .expect(400);
-    expect(response.text).to.equal("password less than 6 character");
+    expect(response.text).to.equal('password less than 6 character');
   });
 
   it('Should update all fields of my user profile', async () => {
@@ -167,23 +168,22 @@ describe('Tests for user routers', () => {
       .post('/users/login')
       .send({
         email: testData.testUser.email,
-        password: testData.testUser.password
+        password: testData.testUser.password,
       })
       .expect(200);
     await request(app)
       .patch('/users/me')
-      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .set('Authorization', `bearer ${responseLogin.body.token}`)
       .send({
         email: testData.newTestUser.email,
         name: testData.newTestUser.name,
-        password: testData.newTestUser.password
+        password: testData.newTestUser.password,
       })
       .expect(200);
     const userOneFromDB = await User.findById(testData.testUser.id);
     expect(userOneFromDB.email).to.equal(testData.newTestUser.email);
     expect(userOneFromDB.name).to.equal(testData.newTestUser.name);
-    const match = await bcrypt.compare(testData.newTestUser.password, userOneFromDB.password)
+    const match = await bcrypt.compare(testData.newTestUser.password, userOneFromDB.password);
     expect(match).to.equal(true);
   });
-
 });

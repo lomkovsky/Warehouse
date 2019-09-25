@@ -1,11 +1,13 @@
+/* eslint-disable consistent-return */
 const express = require('express');
+const passport = require('passport');
+
 const router = new express.Router();
 const Category = require('../models/category');
-const passport = require('passport');
+
 
 // read all categories
 router.get('/categories', async (req, res) => {
-
   try {
     const categories = await Category.find().populate('products');
     res.send(categories);
@@ -16,7 +18,7 @@ router.get('/categories', async (req, res) => {
 
 // create a new categories
 router.post('/categories', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  const category = new Category(req.body)
+  const category = new Category(req.body);
   try {
     await category.save();
     res.status(201).send(category);
@@ -30,7 +32,7 @@ router.delete('/categories/:id', passport.authenticate('jwt', { session: false }
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).send('category not found')
+      return res.status(404).send('category not found');
     }
     await category.remove();
     res.status(204).send();
@@ -39,14 +41,14 @@ router.delete('/categories/:id', passport.authenticate('jwt', { session: false }
   }
 });
 
-//update category
+// update category
 router.patch('/categories/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(req.params.id,
       req.body,
       { new: true });
     if (!category) {
-      return res.status(404).send('category not found')
+      return res.status(404).send('category not found');
     }
     res.send(category);
   } catch (e) {
@@ -59,7 +61,7 @@ router.get('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).send('category not found')
+      return res.status(404).send('category not found');
     }
     res.send(category);
   } catch (e) {

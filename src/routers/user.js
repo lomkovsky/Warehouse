@@ -63,9 +63,7 @@ router.patch('/users/me', passport.authenticate('jwt', { session: false }), asyn
     if (!user) {
       return res.status(404).send('user not found')
     }
-    if(req.body.name) {user.name = req.body.name}
-    if(req.body.email) {user.email = req.body.email}
-    if(req.body.password) {user.password = req.body.password}
+    Object.assign(user, req.body);
     await user.save();
     user = await user.publicFields();
     res.send(user);

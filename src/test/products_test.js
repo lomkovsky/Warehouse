@@ -3,28 +3,33 @@ const { expect } = require("chai");
 require('../db/mongodb');
 const app = require('../app.js');
 const Product = require('../models/product');
-const { setupDatabase, beerProductId, drinkCategoryId } = require('./fixtures/db.js');
+const {
+  setupDatabase,
+  drinkCategoryId,
+  beerProductId,
+  testUserEmail,
+  testUserPassword,
+  testProductName,
+  newProductName,
+  newProductDescription
+} = require('./fixtures/db.js');
 
 
 beforeEach(setupDatabase);
 describe('Tests for product routers', () => {
-  
+
   it('Should fetched all product from db', async () => {
-    const productOneFromDB = await Product.findById(beerProductId);
-    const allProductOneFromDB = await Product.find();
     const response = await request(app)
       .get('/products')
       .expect(200);
-    expect(response.body[0].name).to.equal(productOneFromDB.name);
-    expect(allProductOneFromDB.length).to.equal(1);
+    expect(response.body[0].name).to.equal(testProductName);
   });
 
   it('Should fetched one product from db by ID', async () => {
-    const productOneFromDB = await Product.findById(beerProductId)
     const response = await request(app)
       .get(`/products/${beerProductId}`)
       .expect(200);
-    expect(response.body.name).to.equal(productOneFromDB.name);
+    expect(response.body.name).to.equal(testProductName);
   });
 
   it('Should delete beer product', async () => {
@@ -32,8 +37,8 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
@@ -50,22 +55,22 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
       .post('/products')
       .set('Authorization', 'bearer ' + responseLogin.body.token)
-      .send({        
-        name: "water",
-        description: "non alcohol drink",
-        category : drinkCategoryId,
+      .send({
+        name: newProductName,
+        description: newProductDescription,
+        category: drinkCategoryId,
         amount: 1000,
-        price: 1        
+        price: 1
       })
       .expect(200);
-    expect(response.body.name).to.equal("water");
+    expect(response.body.name).to.equal(newProductName);
     const allProductOneFromDB = await Product.find();
     expect(allProductOneFromDB.length).to.equal(2);
   });
@@ -76,23 +81,23 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
       .patch(`/products/${beerProductId}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
-      .send({        
-        name: "water",
-        description: "non alcohol drink",
+      .send({
+        name: newProductName,
+        description: newProductDescription,
         amount: 1000,
-        price: 1        
+        price: 1
       })
       .expect(200);
-      expect(response.body.name).to.equal("water");
+    expect(response.body.name).to.equal(newProductName);
     const productromDB = await Product.findById(beerProductId);
-    expect(productromDB.name).to.equal("water");
+    expect(productromDB.name).to.equal(newProductName);
   });
 
 });

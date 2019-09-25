@@ -3,26 +3,32 @@ const { expect } = require("chai");
 require('../db/mongodb');
 const app = require('../app.js');
 const Category = require('../models/category');
-const { setupDatabase, drinkCategoryId } = require('./fixtures/db.js');
+const { 
+  setupDatabase,
+  drinkCategoryId,
+  testUserEmail,
+  testUserPassword,
+  testCategoryName,
+  newCategoryName,
+  newCategoryDescription 
+} = require('./fixtures/db.js');
 
 
 beforeEach(setupDatabase);
 describe('Tests for categories routers', () => {
 
   it('Should fetched all categories from db', async () => {
-    const categoryOneFromDB = await Category.findById(drinkCategoryId)
     const response = await request(app)
       .get('/categories')
       .expect(200);
-    expect(response.body[0].name).to.equal(categoryOneFromDB.name);
+    expect(response.body[0].name).to.equal(testCategoryName);
   });
 
   it('Should fetched one category from db by ID', async () => {
-    const categoryOneFromDB = await Category.findById(drinkCategoryId)
     const response = await request(app)
       .get(`/categories/${drinkCategoryId}`)
       .expect(200);
-    expect(response.body.name).to.equal(categoryOneFromDB.name);
+    expect(response.body.name).to.equal(testCategoryName);
   });
 
   it('Should delete drink category', async () => {
@@ -30,8 +36,8 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
@@ -48,19 +54,19 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
       .post('/categories')
       .set('Authorization', 'bearer ' + responseLogin.body.token)
-      .send({        
-          name: "eat",
-          description: "meal and other"        
+      .send({
+        name: newCategoryName,
+        description: newCategoryDescription
       })
       .expect(201);
-    expect(response.body.name).to.equal("eat");
+    expect(response.body.name).to.equal(newCategoryName);
     const allCategoriesFromDB = await Category.find();
     expect(allCategoriesFromDB.length).to.equal(2);
   });
@@ -70,21 +76,24 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: "userOne@gmail.com",
-        password: "userOne123"
+        email: testUserEmail,
+        password: testUserPassword
       })
       .expect(200);
     const response = await request(app)
       .patch(`/categories/${drinkCategoryId}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
-      .send({        
-          name: "eat",
-          description: "meal and other"        
+      .send({
+        name: newCategoryName,
+        description: newCategoryDescription
       })
       .expect(200);
-    expect(response.body.name).to.equal("eat");
+    expect(response.body.name).to.equal(newCategoryName);
     const allCategoriesFromDB = await Category.find();
     expect(allCategoriesFromDB.length).to.equal(1);
+    const categoryFromDB = await Category.findById(drinkCategoryId);
+    expect(categoryFromDB.name).to.equal(newCategoryName);
+    expect(categoryFromDB.description).to.equal(newCategoryDescription);
   });
 
 });

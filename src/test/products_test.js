@@ -3,17 +3,7 @@ const { expect } = require("chai");
 require('../db/mongodb');
 const app = require('../app.js');
 const Product = require('../models/product');
-const {
-  setupDatabase,
-  drinkCategoryId,
-  beerProductId,
-  testUserEmail,
-  testUserPassword,
-  testProductName,
-  newProductName,
-  newProductDescription
-} = require('./fixtures/db.js');
-
+const { testData, setupDatabase } = require('./fixtures/db.js');
 
 beforeEach(setupDatabase);
 describe('Tests for product routers', () => {
@@ -22,14 +12,14 @@ describe('Tests for product routers', () => {
     const response = await request(app)
       .get('/products')
       .expect(200);
-    expect(response.body[0].name).to.equal(testProductName);
+    expect(response.body[0].name).to.equal(testData.testProduct.name);
   });
 
   it('Should fetched one product from db by ID', async () => {
     const response = await request(app)
-      .get(`/products/${beerProductId}`)
+      .get(`/products/${testData.testProduct.id}`)
       .expect(200);
-    expect(response.body.name).to.equal(testProductName);
+    expect(response.body.name).to.equal(testData.testProduct.name);
   });
 
   it('Should delete beer product', async () => {
@@ -37,16 +27,16 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
-      .delete(`/products/${beerProductId}`)
+      .delete(`/products/${testData.testProduct.id}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .expect(204);
     expect(response.body.name).not.to.exist;
-    const productOneFromDB = await Product.findById(beerProductId)
+    const productOneFromDB = await Product.findById(testData.testProduct.id)
     expect(productOneFromDB).not.to.exist;
   });
 
@@ -55,22 +45,22 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
       .post('/products')
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .send({
-        name: newProductName,
-        description: newProductDescription,
-        category: drinkCategoryId,
-        amount: 1000,
-        price: 1
+        name: testData.newTestProduct.name, 
+        description: testData.newTestProduct.description,
+        category: testData.testCategory.id,
+        amount: testData.newTestProduct.amount,
+        price: testData.newTestProduct.price
       })
       .expect(200);
-    expect(response.body.name).to.equal(newProductName);
+    expect(response.body.name).to.equal(testData.newTestProduct.name);
     const allProductOneFromDB = await Product.find();
     expect(allProductOneFromDB.length).to.equal(2);
   });
@@ -81,23 +71,22 @@ describe('Tests for product routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
-      .patch(`/products/${beerProductId}`)
+      .patch(`/products/${testData.testProduct.id}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .send({
-        name: newProductName,
-        description: newProductDescription,
-        amount: 1000,
-        price: 1
+        name: testData.newTestProduct.name,
+        description: testData.newTestProduct.description,
+        amount: testData.newTestProduct.amount,
+        price: testData.newTestProduct.price
       })
       .expect(200);
-    expect(response.body.name).to.equal(newProductName);
-    const productromDB = await Product.findById(beerProductId);
-    expect(productromDB.name).to.equal(newProductName);
+    expect(response.body.name).to.equal(testData.newTestProduct.name);
+    const productromDB = await Product.findById(testData.testProduct.id);
+    expect(productromDB.name).to.equal(testData.newTestProduct.name);
   });
-
 });

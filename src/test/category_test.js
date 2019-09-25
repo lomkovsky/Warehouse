@@ -3,15 +3,7 @@ const { expect } = require("chai");
 require('../db/mongodb');
 const app = require('../app.js');
 const Category = require('../models/category');
-const { 
-  setupDatabase,
-  drinkCategoryId,
-  testUserEmail,
-  testUserPassword,
-  testCategoryName,
-  newCategoryName,
-  newCategoryDescription 
-} = require('./fixtures/db.js');
+const { testData, setupDatabase } = require('./fixtures/db.js');
 
 
 beforeEach(setupDatabase);
@@ -21,14 +13,14 @@ describe('Tests for categories routers', () => {
     const response = await request(app)
       .get('/categories')
       .expect(200);
-    expect(response.body[0].name).to.equal(testCategoryName);
+    expect(response.body[0].name).to.equal(testData.testCategory.name);
   });
 
   it('Should fetched one category from db by ID', async () => {
     const response = await request(app)
-      .get(`/categories/${drinkCategoryId}`)
+      .get(`/categories/${testData.testCategory.id}`)
       .expect(200);
-    expect(response.body.name).to.equal(testCategoryName);
+    expect(response.body.name).to.equal(testData.testCategory.name);
   });
 
   it('Should delete drink category', async () => {
@@ -36,16 +28,16 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
-      .delete(`/categories/${drinkCategoryId}`)
+      .delete(`/categories/${testData.testCategory.id}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .expect(204);
     expect(response.body.name).not.to.exist;
-    const categoryOneFromDB = await Category.findById(drinkCategoryId);
+    const categoryOneFromDB = await Category.findById(testData.testCategory.id);
     expect(categoryOneFromDB).not.to.exist;
   });
 
@@ -54,19 +46,19 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
       .post('/categories')
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .send({
-        name: newCategoryName,
-        description: newCategoryDescription
+        name: testData.newTestCategory.name,
+        description: testData.newTestCategory.description
       })
       .expect(201);
-    expect(response.body.name).to.equal(newCategoryName);
+    expect(response.body.name).to.equal(testData.newTestCategory.name);
     const allCategoriesFromDB = await Category.find();
     expect(allCategoriesFromDB.length).to.equal(2);
   });
@@ -76,24 +68,23 @@ describe('Tests for categories routers', () => {
     const responseLogin = await request(app)
       .post('/users/login')
       .send({
-        email: testUserEmail,
-        password: testUserPassword
+        email: testData.testUser.email,
+        password: testData.testUser.password
       })
       .expect(200);
     const response = await request(app)
-      .patch(`/categories/${drinkCategoryId}`)
+      .patch(`/categories/${testData.testCategory.id}`)
       .set('Authorization', 'bearer ' + responseLogin.body.token)
       .send({
-        name: newCategoryName,
-        description: newCategoryDescription
+        name: testData.newTestCategory.name,
+        description: testData.newTestCategory.description
       })
       .expect(200);
-    expect(response.body.name).to.equal(newCategoryName);
+    expect(response.body.name).to.equal(testData.newTestCategory.name);
     const allCategoriesFromDB = await Category.find();
     expect(allCategoriesFromDB.length).to.equal(1);
-    const categoryFromDB = await Category.findById(drinkCategoryId);
-    expect(categoryFromDB.name).to.equal(newCategoryName);
-    expect(categoryFromDB.description).to.equal(newCategoryDescription);
+    const categoryFromDB = await Category.findById(testData.testCategory.id);
+    expect(categoryFromDB.name).to.equal(testData.newTestCategory.name);
+    expect(categoryFromDB.description).to.equal(testData.newTestCategory.description);
   });
-
 });

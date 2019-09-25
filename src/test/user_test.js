@@ -144,6 +144,25 @@ describe('Tests for user routers', () => {
     expect(response.body.error).to.equal('Invalid filds for updates!');
   });
 
+  it('Should do not update my user profile because pass less then 6 character', async () => {
+    // logging user for taking a token
+    const responseLogin = await request(app)
+      .post('/users/login')
+      .send({
+        email: "userOne@gmail.com",
+        password: "userOne123"
+      })
+      .expect(200);
+    const response = await request(app)
+      .patch('/users/me')
+      .set('Authorization', 'bearer ' + responseLogin.body.token)
+      .send({
+        password: "jone"
+      })
+      .expect(400);
+    expect(response.text).to.equal("password less than 6 character");
+  });
+
   it('Should update all fields of my user profile', async () => {
     // logging user for taking a token
     const responseLogin = await request(app)

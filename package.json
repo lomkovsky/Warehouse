@@ -6,7 +6,8 @@
   "scripts": {
     "mongodb": "/home/lom/mongodb/bin/mongod --dbpath=/home/lom/mongodb-data",
     "dev": "env-cmd -f ./src/config/dev.env nodemon ./src/index.js -e js,pug,css",
-    "test": "env-cmd -f ./src/config/test.env mocha --recursive \"./src/test/*.js\""
+    "test": "env-cmd -f ./src/config/test.env mocha --recursive \"./src/test/*.js\"",
+    "test-with-coverage": "nyc --check-coverage npm run test"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "eslint-plugin-mocha": "^6.1.1",
     "mocha": "^6.2.0",
     "nodemon": "^1.19.2",
+    "nyc": "^14.1.1",
     "supertest": "^4.0.2"
   }
 }

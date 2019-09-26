@@ -100,7 +100,9 @@ describe('Tests for user routers', () => {
       .delete('/users/me')
       .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(204);
-    expect(response.body.name).not.to.exist;
+    const userOneFromDB = await User.findById(testData.testUser.id);
+    expect(response.body.name).to.be.undefined;
+    expect(userOneFromDB).to.be.null;
   });
 
   it('Should update email of my user profile', async () => {

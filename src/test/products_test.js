@@ -35,9 +35,9 @@ describe('Tests for product routers', () => {
       .delete(`/products/${testData.testProduct.id}`)
       .set('Authorization', `bearer ${responseLogin.body.token}`)
       .expect(204);
-    expect(response.body.name).not.to.exist;
+    expect(response.body.name).to.be.undefined;
     const productOneFromDB = await Product.findById(testData.testProduct.id);
-    expect(productOneFromDB).not.to.exist;
+    expect(productOneFromDB).to.be.null;
   });
 
   it('Should create water product', async () => {

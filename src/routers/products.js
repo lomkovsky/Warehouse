@@ -1,8 +1,10 @@
+/* eslint-disable consistent-return */
 const express = require('express');
+
 const router = new express.Router();
+const passport = require('passport');
 const Category = require('../models/category');
 const Product = require('../models/product');
-const passport = require('passport');
 
 // create a new product
 router.post('/products', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -36,7 +38,7 @@ router.delete('/products/:id', passport.authenticate('jwt', { session: false }),
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
-      return res.status(404).send('product not found')
+      return res.status(404).send('product not found');
     }
     res.status(204).send();
   } catch (e) {
@@ -50,9 +52,9 @@ router.patch('/products/:id', passport.authenticate('jwt', { session: false }), 
     let product = await Product
       .findOneAndUpdate({ _id: req.params.id },
         req.body,
-        { new: true })
+        { new: true });
     if (!product) {
-      return res.status(404).send('product not found')
+      return res.status(404).send('product not found');
     }
     product = await product.populate('category').execPopulate();
     res.send(product);
@@ -65,7 +67,7 @@ router.patch('/products/:id', passport.authenticate('jwt', { session: false }), 
 router.get('/products/:id', async (req, res) => {
   const product = await Product.findById(req.params.id).populate('category');
   if (!product) {
-    return res.status(404).send('product not found')
+    return res.status(404).send('product not found');
   }
   res.send(product);
 });

@@ -5,7 +5,7 @@ const Product = require('../../models/product');
 
 const testData = {
   testUser: {
-    id: '',
+    id: new mongoose.Types.ObjectId(),
     name: 'userOne',
     email: 'userOne@gmail.com',
     password: 'userOne123',
@@ -17,7 +17,7 @@ const testData = {
   },
   shortPassword: 'short',
   testCategory: {
-    id: '',
+    id: new mongoose.Types.ObjectId(),
     name: 'drink',
     description: 'water and other to drink',
   },
@@ -26,7 +26,7 @@ const testData = {
     description: 'meal and other',
   },
   testProduct: {
-    id: '',
+    id: new mongoose.Types.ObjectId(),
     name: 'beer',
     description: 'alcohol drink',
     amount: 10,
@@ -39,10 +39,6 @@ const testData = {
     price: 1,
   },
 };
-
-testData.testUser.id = new mongoose.Types.ObjectId();
-testData.testCategory.id = new mongoose.Types.ObjectId();
-testData.testProduct.id = new mongoose.Types.ObjectId();
 
 const setupDatabase = async () => {
   const userOne = new User({

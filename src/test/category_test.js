@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+
 const request = require('supertest');
 const { expect } = require('chai');
 require('../db/mongodb');
@@ -34,11 +35,11 @@ describe('Tests for categories routers', () => {
       .expect(200);
     const response = await request(app)
       .delete(`/categories/${testData.testCategory.id}`)
-      .set('Authorization', `bearer ${responseLogin.body.token}`)
+      .set('Authorization', `Bearer ${responseLogin.body.token}`)
       .expect(204);
-    expect(response.body.name).not.to.exist;
+    expect(response.body.name).to.be.undefined;
     const categoryOneFromDB = await Category.findById(testData.testCategory.id);
-    expect(categoryOneFromDB).not.to.exist;
+    expect(categoryOneFromDB).to.be.null;
   });
 
   it('Should create eat category', async () => {
@@ -83,8 +84,7 @@ describe('Tests for categories routers', () => {
     expect(response.body.name).to.equal(testData.newTestCategory.name);
     const allCategoriesFromDB = await Category.find();
     expect(allCategoriesFromDB.length).to.equal(1);
-    const categoryFromDB = await Category.findById(testData.testCategory.id);
-    expect(categoryFromDB.name).to.equal(testData.newTestCategory.name);
-    expect(categoryFromDB.description).to.equal(testData.newTestCategory.description);
+    expect(allCategoriesFromDB[0].name).to.equal(testData.newTestCategory.name);
+    expect(allCategoriesFromDB[0].description).to.equal(testData.newTestCategory.description);
   });
 });

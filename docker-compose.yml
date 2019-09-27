@@ -1,0 +1,25 @@
+version: '3'
+services:
+  node:
+    container_name: warehouse
+    restart: always
+#    env_file:
+#      ./src/config/docker.env
+    build: .
+    ports:
+      - '80:3000'
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    environment:
+      WAIT_HOSTS: mongo:27017
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./mongo_data:/data/db
+    ports:
+      - '27017:27017'
+    restart: always
+    

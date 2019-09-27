@@ -4,9 +4,11 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "mongodb": "/home/lom/mongodb/bin/mongod --dbpath=/home/lom/mongodb-data",
+    "start": "env-cmd -f ./src/config/docker.env node ./src/index.js",
+    "mongodb": "/home/lom/mongodb/bin/mongod --dbpath=/home/lom/Documents/nodejspr/Warehouse/mongo_data",
     "dev": "env-cmd -f ./src/config/dev.env nodemon ./src/index.js -e js,pug,css",
     "test": "env-cmd -f ./src/config/test.env mocha --recursive \"./src/test/*.js\"",
+    "test-docker": "env-cmd -f ./src/config/test-docker.env mocha --recursive \"./src/test/*.js\"",
     "test-with-coverage": "nyc --check-coverage npm run test"
   },
   "author": "",

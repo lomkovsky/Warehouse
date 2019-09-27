@@ -3,8 +3,6 @@ services:
   node:
     container_name: warehouse
     restart: always
-#    env_file:
-#      ./src/config/docker.env
     build: .
     ports:
       - '80:3000'

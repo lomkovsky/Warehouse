@@ -26,8 +26,13 @@ router.post('/products', passport.authenticate('jwt', { session: false }), async
 // read all products from all categories
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.find().populate('category');
-    res.send(products);
+    if (req.query.category) {
+      const products = await Product.find({ category: req.query.category }).populate('category');
+      res.send(products);
+    } else {
+      const products = await Product.find().populate('category');
+      res.send(products);
+    }
   } catch (err) {
     res.status(400).send(err.message);
   }

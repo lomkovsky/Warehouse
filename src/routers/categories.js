@@ -37,6 +37,9 @@ router.delete('/categories/:id', passport.authenticate('jwt', { session: false }
     await category.remove();
     res.status(204).send();
   } catch (e) {
+    // e.status = 404
+    // TDOD: research decision
+    // throw e
     res.status(404).send(e.message);
   }
 });

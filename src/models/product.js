@@ -5,23 +5,23 @@ const productSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    trim: true
+    trim: true,
   },
   description: {
-    type: String
+    type: String,
   },
   price: {
     type: Number,
-    default: 0
+    default: 0,
   },
   amount: {
     type: Number,
-    default: 0
+    default: 0,
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category'
-  }
+    ref: 'Category',
+  },
 });
 
 const Product = mongoose.model('Product', productSchema);

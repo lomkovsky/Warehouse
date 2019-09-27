@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable func-names */
 const mongoose = require('mongoose');
 const Product = require('./product');
 
@@ -6,11 +8,11 @@ const categorySchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    trim: true
+    trim: true,
   },
   description: {
-    type: String
-  }
+    type: String,
+  },
 }, {
   timestamps: true,
 });
@@ -21,10 +23,10 @@ categorySchema.virtual('products', {
   ref: 'Product',
   localField: '_id',
   foreignField: 'category',
-  count: true
+  count: true,
 });
 
-
+// TODO: implement deleting products by RabbitMQ
 categorySchema.pre('remove', async function (next) {
   const category = this;
   await Product.deleteMany({ category: category._id });

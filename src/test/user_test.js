@@ -44,7 +44,7 @@ describe('Tests for user routers', () => {
         password: testData.shortPassword,
       })
       .expect(400);
-    expect(response.text).to.equal('password less than 6 character');
+    expect(response.text).to.equal('{"statusCode":400,"error":"Bad Request","message":"Password less than 6 character"}');
   });
 
   it('Should do not login my user profile because of a bad pass', async () => {
@@ -142,7 +142,7 @@ describe('Tests for user routers', () => {
         age: 18,
       })
       .expect(400);
-    expect(response.body.error).to.equal('Invalid filds for updates!');
+    expect(response.body.error).to.equal('Bad Request');
   });
 
   it('Should do not update my user profile because pass less then 6 character', async () => {
@@ -161,7 +161,7 @@ describe('Tests for user routers', () => {
         password: testData.shortPassword,
       })
       .expect(400);
-    expect(response.text).to.equal('password less than 6 character');
+    expect(response.text).to.equal('{"statusCode":400,"error":"Bad Request","message":"Password less than 6 character"}');
   });
 
   it('Should update all fields of my user profile', async () => {

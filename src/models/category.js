@@ -1,7 +1,9 @@
+/* eslint-disable global-require */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
-const Product = require('./product');
+const sendToQueue = require('../RabbitMQ/sendDeleteAllProductsFromRemovedCategory');
+const receiveFromQueue = require('../RabbitMQ/receiveDeleteAllProductsFromRemovedCategory');
 
 const categorySchema = new mongoose.Schema({
   name: {
@@ -26,10 +28,10 @@ categorySchema.virtual('products', {
   count: true,
 });
 
-// TODO: implement deleting products by RabbitMQ
 categorySchema.pre('remove', async function (next) {
   const category = this;
-  await Product.deleteMany({ category: category._id });
+  sendToQueue(category._id);
+  receiveFromQueue();
   next();
 });
 

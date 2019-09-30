@@ -6,6 +6,7 @@ require('../db/mongodb');
 const app = require('../app.js');
 const Category = require('../models/category');
 const { testData, setupDatabase } = require('./fixtures/db.js');
+const Product = require('../models/product');
 
 
 beforeEach(setupDatabase);
@@ -40,6 +41,10 @@ describe('Tests for categories routers', () => {
     expect(response.body.name).to.be.undefined;
     const categoryOneFromDB = await Category.findById(testData.testCategory.id);
     expect(categoryOneFromDB).to.be.null;
+    setTimeout(async () => {
+      const productBeerFromeDB = await Product.findOne({ category: testData.testCategory.id });
+      expect(productBeerFromeDB).to.be.null;
+    }, 50000);
   });
 
   it('Should create eat category', async () => {

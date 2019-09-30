@@ -10,11 +10,13 @@ router.post('/users', async (req, res) => {
   const { name, email, password } = req.body;
   // check required fields
   if (!name || !email || !password) {
-    return res.sendStatus(400);
+    // old ver --- return res.sendStatus(400);
+    return res.boom.badRequest('Required fields');
   }
   // check password length
   if (password.length < 6) {
-    return res.status(400).send('password less than 6 character');
+    // old ver --- return res.status(400).send('password less than 6 character');
+    return res.boom.badRequest('Password less than 6 character');
   }
   try {
     // create a new user
@@ -24,12 +26,16 @@ router.post('/users', async (req, res) => {
     user = await user.publicFields();
     res.status(201).send({ user, token });
   } catch (e) {
-    res.status(400).send(e.message);
+    // old ver --- res.status(400).send(e.message);
+    return res.boom.badRequest(e.message);
   }
 });
 
 // error logging handle
-router.get('/users/login/error', (req, res) => res.status(401).send('error logging'));
+router.get('/users/login/error', (req, res) => {
+  // old ver --- res.status(401).send('error logging');
+  res.boom.unauthorized('Error logging');
+});
 
 // login handle
 router.post('/users/login',
@@ -45,8 +51,12 @@ router.post('/users/login',
 
 // get my profile
 router.get('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  const publicUser = await req.user.publicFields();
-  res.send(publicUser);
+  try {
+    const publicUser = await req.user.publicFields();
+    res.send(publicUser);
+  } catch (e) {
+    return res.boom.badImplementation();
+  }
 });
 
 // update my profile
@@ -55,23 +65,27 @@ router.patch('/users/me', passport.authenticate('jwt', { session: false }), asyn
   const allowedUpdates = ['name', 'email', 'password'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
   if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid filds for updates!' });
+    // old ver --- return res.status(400).send({ error: 'Invalid filds for updates!' });
+    return res.boom.badRequest('Invalid filds for updates!');
   }
   if (req.body.password && req.body.password.length < 6) {
-    return res.status(400).send('password less than 6 character');
+    // old ver --- return res.status(400).send('password less than 6 character');
+    return res.boom.badRequest('Password less than 6 character');
   }
   try {
     // eslint-disable-next-line no-underscore-dangle
     let user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).send('user not found');
+      // old ver --- return res.status(404).send('user not found');
+      return res.boom.notFound('user not found');
     }
     Object.assign(user, req.body);
     await user.save();
     user = await user.publicFields();
     res.send(user);
   } catch (e) {
-    res.status(404).send(e.message);
+    // old ver --- res.status(404).send(e.message);
+    return res.boom.notFound(e.message);
   }
 });
 
@@ -81,7 +95,8 @@ router.delete('/users/me', passport.authenticate('jwt', { session: false }), asy
     await req.user.remove();
     res.status(204).send();
   } catch (e) {
-    res.status(500).send(e.message);
+    // old ver --- res.status(500).send(e.message);
+    return res.boom.badImplementation(e.message);
   }
 });
 

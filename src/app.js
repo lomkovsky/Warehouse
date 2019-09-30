@@ -1,10 +1,15 @@
+/* eslint-disable no-console */
 const express = require('express');
 
 const app = express();
+const boom = require('express-boom');
 const passport = require('passport');
 const productsRouter = require('./routers/products');
 const categoriesRouter = require('./routers/categories');
 const userRouter = require('./routers/user');
+
+// returning HTTP errors
+app.use(boom());
 
 // returns JSON
 app.use(express.json());
@@ -21,12 +26,17 @@ app.get('/', (req, res) => {
     title: 'Home',
   });
 });
+
 // connection routers of /products
 app.use(productsRouter);
 // connection routers of /categories
 app.use(categoriesRouter);
 // connection routers of /user
 app.use(userRouter);
-// TODO: add error handling
+
+// Caughting unhandled Rejection
+process.on('unhandledRejection', (err) => {
+  console.log('Caught exception: ', err);
+});
 
 module.exports = app;

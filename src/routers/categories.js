@@ -12,7 +12,8 @@ router.get('/categories', async (req, res) => {
     const categories = await Category.find().populate('products');
     res.send(categories);
   } catch (e) {
-    res.status(500).send('Something went wrong');
+    // old ver --- res.status(500).send('Something went wrong');
+    return res.boom.badImplementation('Something went wrong');
   }
 });
 
@@ -23,7 +24,8 @@ router.post('/categories', passport.authenticate('jwt', { session: false }), asy
     await category.save();
     res.status(201).send(category);
   } catch (e) {
-    res.status(400).send(e.message);
+    // old ver --- res.status(400).send(e.message);
+    return res.boom.badRequest(e.message);
   }
 });
 
@@ -32,15 +34,14 @@ router.delete('/categories/:id', passport.authenticate('jwt', { session: false }
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).send('category not found');
+      // old ver --- return res.status(404).send('category not found');
+      return res.boom.notFound('category not found');
     }
     await category.remove();
     res.status(204).send();
   } catch (e) {
-    // e.status = 404
-    // TDOD: research decision
-    // throw e
-    res.status(404).send(e.message);
+    // old ver --- res.status(404).send(e.message);
+    return res.boom.notFound(e.message);
   }
 });
 
@@ -51,11 +52,13 @@ router.patch('/categories/:id', passport.authenticate('jwt', { session: false })
       req.body,
       { new: true });
     if (!category) {
-      return res.status(404).send('category not found');
+      // old ver --- return res.status(404).send('category not found');
+      return res.boom.notFound('category not found');
     }
     res.send(category);
   } catch (e) {
-    res.status(404).send(e.message);
+    // old ver --- res.status(404).send(e.message);
+    return res.boom.notFound(e.message);
   }
 });
 
@@ -64,11 +67,13 @@ router.get('/categories/:id', async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).send('category not found');
+      // old ver --- return res.status(404).send('category not found');
+      return res.boom.notFound('category not found');
     }
     res.send(category);
   } catch (e) {
-    res.status(404).send(e.message);
+    // old ver --- res.status(404).send(e.message);
+    return res.boom.notFound(e.message);
   }
 });
 module.exports = router;

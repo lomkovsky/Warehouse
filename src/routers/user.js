@@ -49,6 +49,24 @@ router.post('/users/login',
     res.send({ welcomeMassage, token });
   });
 
+// login google handle
+router.get('/users/login/google',
+  passport.authenticate('google', {
+    scope: [
+      'profile',
+      'email',
+      'openid',
+    ],
+  }));
+
+// callback route for google
+router.get('/users/login/google/redirect', passport.authenticate('google'), async (req, res) => {
+  const { user } = req;
+  const token = await user.generateAuthToken();
+  const welcomeMassage = `Welcome ${user.name}!!`;
+  res.send({ welcomeMassage, token });
+});
+
 // get my profile
 router.get('/users/me', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
